@@ -34,6 +34,17 @@ class Usub(ServiceBase):
     languages = language_set(['fr'])
     videos = [Episode]
     require_video = False
+    replacement_char = { " " : "-",
+                        ":" : "",
+                        "'" : "-",
+                        "." : ""
+                        }
+    replacement_word = {
+	"greys" : "grey-s",
+        "marvels_" : "", # marvels_agent_of_s_h_i_e_l_d => agent_of_s_h_i_e_l_d
+        "s_h_i_e_l_d" : "shield", # agent_of_s_h_i_e_l_d => agent_of_shield
+        "fbi_duo_trés_spécial" : "white_collar"
+    }
     #required_features = ['permissive']
 
     def list_checked(self, video, languages):
@@ -43,7 +54,11 @@ class Usub(ServiceBase):
         
         ## Check if we really got informations about our episode
         if series and season and episode:
-            request_series = series.lower().replace(' ', '-')
+            request_series = series.lower()
+            for k, v in self.replacement_char.iteritems():
+                request_series = request_series.replace(k, v)
+            for k, v in self.replacement_word.iteritems():
+                request_series = request_series.replace(k, v)
             if isinstance(request_series, unicode):
                 request_series = request_series.encode('utf-8')
             logger.debug(u'Getting subtitles for %s season %d episode %d with language %r' % (series, season, episode, languages))
@@ -69,6 +84,7 @@ class Usub(ServiceBase):
             episode_num=str(episode)
         season_num = str(season)
         series_name = series.lower().replace(' ', '.')
+        logger.debug(u'Getting subtitles for %s season %d episode %d with language %r' % (series, season, episode, languages))
         possible_episode_naming = [season_num+'x'+episode_num,season_num+episode_num]
         
         
