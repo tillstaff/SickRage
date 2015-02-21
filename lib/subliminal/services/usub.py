@@ -84,7 +84,6 @@ class Usub(ServiceBase):
             episode_num=str(episode)
         season_num = str(season)
         series_name = series.lower().replace(' ', '.')
-        logger.debug(u'Getting subtitles for %s season %d episode %d with language %r' % (series, season, episode, languages))
         possible_episode_naming = [season_num+'x'+episode_num,season_num+episode_num]
         
         
